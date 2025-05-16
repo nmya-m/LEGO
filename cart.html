@@ -4,14 +4,111 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shopping Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      display: inline;
+      margin-right: 1rem;
+    }
+    a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+    main {
+      padding: 1rem;
+    }
+    .cart-item {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .empty-cart {
+      color: #888;
+      font-style: italic;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .remove-btn {
+      margin-top: 0.5rem;
+      background: #e53935;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Shopping Cart</h1>
-    <a href="index.html">Back to Home</a>
+    <h1>Your Shopping Cart</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="help.html">Help</a></li>
+      </ul>
+    </nav>
   </header>
-  <main>
-    <p>Your shopping cart is currently empty.</p>
+  <main id="cart-main">
+    <!-- Cart items will be rendered here -->
   </main>
+  <script>
+    function renderCart() {
+      const cartMain = document.getElementById('cart-main');
+      let cart = [];
+      try {
+        cart = JSON.parse(localStorage.getItem('cart')) || [];
+      } catch {}
+      cartMain.innerHTML = '';
+      if (cart.length === 0) {
+        cartMain.innerHTML = '<div class="empty-cart">Your shopping cart is empty.</div>';
+        return;
+      }
+      cart.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <h3>${item.name}</h3>
+          <p>Color: ${item.color}</p>
+          <p>Price: ${item.price}</p>
+          <p>Set: ${item.set}</p>
+          <button class="remove-btn" data-idx="${idx}">Remove</button>
+        `;
+        cartMain.appendChild(div);
+      });
+      // Remove button logic
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const idx = parseInt(this.getAttribute('data-idx'));
+          cart.splice(idx, 1);
+          localStorage.setItem('cart', JSON.stringify(cart));
+          renderCart();
+        });
+      });
+    }
+    renderCart();
+  </script>
 </body>
 </html>

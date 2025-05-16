@@ -50,7 +50,6 @@
     <h1>Welcome to LEGO Legends!</h1>
     <nav>
       <ul>
-        <li><a href="shop.html">Shop</a></li>
         <li><a href="cart.html">Shopping Cart</a></li>
         <li><a href="help.html">Help</a></li>
       </ul>
@@ -59,18 +58,101 @@
   <main>
     <section>
       <h2>Featured Products</h2>
-      <div class="product">
-        <h3>Product 1</h3>
+      <form id="filter-form" style="margin-bottom:1.5rem;">
+        <label>
+          Color:
+          <input type="text" id="filter-color" placeholder="e.g. red">
+        </label>
+        <label style="margin-left:1rem;">
+          Price:
+          <input type="text" id="filter-price" placeholder="e.g. $10">
+        </label>
+        <label style="margin-left:1rem;">
+          Set:
+          <input type="text" id="filter-set" placeholder="e.g. spaceship">
+        </label>
+        <button type="submit" style="margin-left:1rem;">Filter</button>
+        <button type="button" id="clear-filter" style="margin-left:0.5rem;">Clear</button>
+      </form>
+      <div class="product" data-color="red" data-price="$10" data-set="spaceship">
+        <h3>Product A</h3>
+        <p>Color: red</p>
         <p>Price: $10</p>
-        <button>Add to Cart</button>
+        <p>Set: spaceship</p>
+        <button class="add-to-cart">Add to Cart</button>
       </div>
-      <div class="product">
-        <h3>Product 2</h3>
+      <div class="product" data-color="blue" data-price="$20" data-set="castle">
+        <h3>Product B</h3>
+        <p>Color: blue</p>
         <p>Price: $20</p>
-        <button>Add to Cart</button>
+        <p>Set: castle</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+      <div class="product" data-color="green" data-price="$30" data-set="pirate ship">
+        <h3>Product C</h3>
+        <p>Color: green</p>
+        <p>Price: $30</p>
+        <p>Set: pirate ship</p>
+        <button class="add-to-cart">Add to Cart</button>
       </div>
     </section>
   </main>
+  <script>
+    const form = document.getElementById('filter-form');
+    const clearBtn = document.getElementById('clear-filter');
+    const products = document.querySelectorAll('.product');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const color = document.getElementById('filter-color').value.trim().toLowerCase();
+      const price = document.getElementById('filter-price').value.trim().toLowerCase();
+      const set = document.getElementById('filter-set').value.trim().toLowerCase();
+
+      products.forEach(prod => {
+        const prodColor = prod.getAttribute('data-color').toLowerCase();
+        const prodPrice = prod.getAttribute('data-price').toLowerCase();
+        const prodSet = prod.getAttribute('data-set').toLowerCase();
+
+        const matchColor = !color || prodColor.includes(color);
+        const matchPrice = !price || prodPrice.includes(price);
+        const matchSet = !set || prodSet.includes(set);
+
+        if (matchColor && matchPrice && matchSet) {
+          prod.style.display = '';
+        } else {
+          prod.style.display = 'none';
+        }
+      });
+    });
+
+    clearBtn.addEventListener('click', function() {
+      document.getElementById('filter-color').value = '';
+      document.getElementById('filter-price').value = '';
+      document.getElementById('filter-set').value = '';
+      products.forEach(prod => prod.style.display = '');
+    });
+
+    // Add to Cart functionality
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const productDiv = this.closest('.product');
+        const product = {
+          name: productDiv.querySelector('h3').textContent,
+          color: productDiv.getAttribute('data-color'),
+          price: productDiv.getAttribute('data-price'),
+          set: productDiv.getAttribute('data-set')
+        };
+        // Get current cart or empty array
+        let cart = [];
+        try {
+          cart = JSON.parse(localStorage.getItem('cart')) || [];
+        } catch {}
+        cart.push(product);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert('Added to cart!');
+      });
+    });
+  </script>
 </body>
 </html>
 

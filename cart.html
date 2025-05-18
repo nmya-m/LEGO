@@ -59,6 +59,17 @@
       padding: 0.3rem 0.8rem;
       cursor: pointer;
     }
+    .checkout-btn {
+      display: block;
+      margin: 2rem auto 0 auto;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.7rem 2rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -98,6 +109,41 @@
         `;
         cartMain.appendChild(div);
       });
+      // Add checkout button
+      const checkoutBtn = document.createElement('button');
+      checkoutBtn.className = 'checkout-btn';
+      checkoutBtn.textContent = 'Checkout';
+      checkoutBtn.onclick = function() {
+        // Prevent multiple forms
+        if (document.getElementById('checkout-form')) return;
+        const form = document.createElement('form');
+        form.id = 'checkout-form';
+        form.style.marginTop = '2rem';
+        form.innerHTML = `
+          <h2>Checkout</h2>
+          <label>
+            Address:<br>
+            <input type="text" name="address" required style="width:60%;padding:0.5rem;margin-bottom:1rem;">
+          </label><br>
+          <label>
+            Payment Info:<br>
+            <input type="text" name="payment" required style="width:60%;padding:0.5rem;margin-bottom:1rem;">
+          </label><br>
+          <button type="submit" class="checkout-btn" style="margin-top:1rem;">Submit Order</button>
+        `;
+        form.onsubmit = function(e) {
+          e.preventDefault();
+          const eta = new Date();
+          eta.setDate(eta.getDate() + 7);
+          const etaStr = eta.toLocaleDateString();
+          alert('Order submitted! Estimated delivery: ' + etaStr + '. Thank you for shopping with us!');
+        };
+        cartMain.appendChild(form);
+        // Scroll to form
+        form.scrollIntoView({behavior: "smooth"});
+      };
+      cartMain.appendChild(checkoutBtn);
+
       // Remove button logic
       document.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', function() {
